@@ -18,6 +18,7 @@ class ImgView(Node):
         super().__init__("img_view")
         self.bridge = CvBridge()
         self.frame = None
+        self.img_num = 0
         self.create_subscription(Image, topic, self.on_image, QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT, depth=10))
         cv2.namedWindow(WINDOW, cv2.WINDOW_NORMAL)
         # Poll the GUI/keyboard at ~30 Hz.
@@ -33,7 +34,9 @@ class ImgView(Node):
             cv2.imshow(WINDOW, self.frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("s") and self.frame is not None:
-            name = datetime.datetime.now().strftime("image_%Y%m%d_%H%M%S_%f.png")
+            # name = datetime.datetime.now().strftime("image_%Y%m%d_%H%M%S_%f.png")
+            name = f"img_{self.img_num}.png"
+            self.img_num += 1
             cv2.imwrite(name, self.frame)
             self.get_logger().info(f"saved {name}")
         elif key == ord("q"):
